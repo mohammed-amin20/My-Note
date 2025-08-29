@@ -31,10 +31,6 @@ class NotesViewModel @Inject constructor(
         getNotes(NoteOrder.Date(OrderType.Descending))
     }
 
-//    private val _uiAction = MutableSharedFlow<UiAction>()
-//    val uiAction = _uiAction.asSharedFlow()
-
-
     fun onEvent(event: NotesEvent){
         when(event){
             is NotesEvent.DeleteNote -> {
@@ -49,10 +45,12 @@ class NotesViewModel @Inject constructor(
                 ){
                     return
                 }
+                getNotes(event.noteOrder)
             }
             is NotesEvent.RestoreNote -> {
                 viewModelScope.launch {
                     noteUseCases.addNote(recentlyDeleteNote ?: return@launch)
+                    recentlyDeleteNote = null
                 }
             }
             is NotesEvent.ToggleOrderSection -> {
