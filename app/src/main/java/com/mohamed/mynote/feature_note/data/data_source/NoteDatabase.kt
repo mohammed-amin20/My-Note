@@ -1,6 +1,7 @@
 package com.mohamed.mynote.feature_note.data.data_source
 
 import androidx.room.Database
+import androidx.room.RoomDatabase
 import com.mohamed.mynote.feature_note.data.data_source.NoteDatabase.Companion.DATABASE_VERSION
 import com.mohamed.mynote.feature_note.domain.model.Note
 
@@ -8,7 +9,7 @@ import com.mohamed.mynote.feature_note.domain.model.Note
     entities = [Note::class],
     version = DATABASE_VERSION
 )
-abstract class NoteDatabase {
+abstract class NoteDatabase : RoomDatabase() {
 
     abstract val noteDao : NoteDao
 
