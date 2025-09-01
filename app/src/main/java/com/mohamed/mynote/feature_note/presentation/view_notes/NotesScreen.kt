@@ -37,10 +37,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mohamed.mynote.R
-import com.mohamed.mynote.feature_note.presentation.util.Screen
+import com.mohamed.mynote.feature_note.presentation.SharedViewModel
 import com.mohamed.mynote.feature_note.presentation.view_notes.components.NoteItem
 import com.mohamed.mynote.feature_note.presentation.view_notes.components.OrderSection
 import kotlinx.coroutines.launch
@@ -48,7 +47,9 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotesScreen(
-    navController: NavController,
+//    navController: NavController,
+    goToAddEditNoteScreen: () -> Unit,
+    sharedViewModel: SharedViewModel,
     viewModel: NotesViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
@@ -59,18 +60,21 @@ fun NotesScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navController.navigate(Screen.AddEditNoteScreen.route)
+                    sharedViewModel.note = null
+                    goToAddEditNoteScreen()
                 },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = Color.White
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add Note"
+                    contentDescription = "Add Note",
+                    tint = Color.White
                 )
             }
         },
-        snackbarHost = { SnackbarHost(SnackbarHostState()) }
+        snackbarHost = { SnackbarHost(SnackbarHostState()) },
+        containerColor = Color.DarkGray
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -78,23 +82,25 @@ fun NotesScreen(
                 .padding(innerPadding)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "Your note",
-                    style = MaterialTheme.typography.headlineMedium
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = Color.White
                 )
                 IconButton(
                     onClick = {
                         viewModel.onEvent(NotesEvent.ToggleOrderSection)
-                    },
-
-                    ) {
+                    }
+                ){
                     Icon(
                         painter = painterResource(R.drawable.sort_24),
-                        contentDescription = "Sort ."
+                        contentDescription = "Sort .",
+                        tint = Color.White
                     )
                 }
             }
@@ -121,9 +127,8 @@ fun NotesScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                navController.navigate(
-                                    Screen.AddEditNoteScreen.route + "?noteId=${note.id}&noteColor=${note.color}"
-                                )
+                                sharedViewModel.note = note
+                                goToAddEditNoteScreen()
                             },
                         onDeleteClick = {
                             viewModel.onEvent(NotesEvent.DeleteNote(note))

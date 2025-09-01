@@ -52,7 +52,7 @@ class AddEditNoteViewModel @Inject constructor(
                             text = note.content,
                             isHintVisible = false
                         )
-                        _noteColor.value = note.color
+                        _noteColor.intValue = note.color
                     }
                 }
             }
@@ -85,7 +85,7 @@ class AddEditNoteViewModel @Inject constructor(
                 )
             }
             is AddEditNoteEvent.ChangeColor -> {
-                _noteColor.value = event.color
+                _noteColor.intValue = event.color
             }
             AddEditNoteEvent.SaveNote -> {
                 viewModelScope.launch {
@@ -95,7 +95,7 @@ class AddEditNoteViewModel @Inject constructor(
                                 title = noteTitle.value.text,
                                 content = _noteContent.value.text,
                                 timestamp = System.currentTimeMillis(),
-                                color = _noteColor.value,
+                                color = _noteColor.intValue,
                                 id = currentNoteId
                             )
                         )

@@ -36,16 +36,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.mohamed.mynote.feature_note.domain.model.Note
+import com.mohamed.mynote.feature_note.presentation.SharedViewModel
 import com.mohamed.mynote.feature_note.presentation.add_edit_note.components.TransparentHintTextField
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @Composable
 fun AddEditNoteScreen(
-    navController: NavController,
+    goToNoteScreen: () -> Unit,
     noteColor : Int,
+    sharedViewModel: SharedViewModel,
     viewModel: AddEditNoteViewModel = hiltViewModel()
 ) {
 
@@ -70,9 +71,18 @@ fun AddEditNoteScreen(
                     )
                 }
                 AddEditNoteViewModel.UiEvent.SaveNote -> {
-                    navController.navigateUp()
+                    goToNoteScreen()
                 }
             }
+        }
+    }
+
+    val note = sharedViewModel.note
+    if (note != null){
+        viewModel.apply {
+            onEvent(AddEditNoteEvent.EnteredTitle(note.title))
+            onEvent(AddEditNoteEvent.EnteredContent(note.content))
+            onEvent(AddEditNoteEvent.ChangeColor(note.color))
         }
     }
 
